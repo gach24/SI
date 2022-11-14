@@ -36,7 +36,7 @@ cd [directorio]
 
 - (Change directory) Permite cambiar de directorio
 
-- Ejemplo: 
+- Ejemplo:
 
 ```sh
 cd /home
@@ -119,7 +119,7 @@ man [seccion] termino
 - Las páginas del man están almacendas en un directorio `/usr/share/man`
 
 - Cuando instalamos un programa instala también las páginas de ayuda dentro de `/usr/share/man/manX`, donde la X corresponde a las distantes secciones del man
- 
+
 - Secciones:
   - 1) Comandos generales Ej: ls, cd, ...
   - 2) Llamadas al sistema
@@ -139,7 +139,7 @@ man passwd # Mostraría información sobre el comando passwd
 
 ```
 
-## NL 
+## NL
 
 - Numera las líneas, es exactamente igual que `cat -n`
 
@@ -157,7 +157,7 @@ nl numeros.txt # Numéra las líneas menos líneas en blanco
 nl -ba numeros.txt # Numera todo
 ```
 
-## HEAD 
+## HEAD
 
 - Muestra las líneas iniciales del fichero
 
@@ -214,7 +214,7 @@ wc -wnumeros.txt
 wc -m numeros.txt
 ```
 
-# SORT
+## SORT
 
 - Ordena las líneas del fichero
 
@@ -236,7 +236,58 @@ sort -k 2 -t' ' nombres.txt
 sort -n nombres.txt
 ```
 
+## UNIQ
 
+- Sintaxis: uniq [opciones] [ficheros]
+
+- Quita las líneas repetidas
+
+- Opciones:
+  - -c => Muestra el número de repeticiones
+  - -d => Muestra solo las líneas repetidas
+  - -u => Muestra solo las líneas no repetidas
+- Ejemplos:
+
+```sh
+uniq numeros.txt # No quita las repeticiones discontinuas
+sort numeros.txt | uniq # Quita las repeticiones aun siendo discontinuas
+uniq -c numeros.txt 
+
+```
+
+## CUT
+
+- Sintaxis: cut [opciones] [fichero]
+
+- Cut extrae columnas de un fichero
+
+- Opciones:
+  - -f numeros => Determina las columnas que quiero extraer, siendo números los números de columna separados por comas
+  - -d separador => Indica el separador de columnas
+  - -c numeros => Determina los caracteres o secuencia de caracteres a extraer
+
+- Ejemplos:
+
+```sh
+cut -f2,3 -d':' nombres.txt
+cut -f2-5 -d':' nombres.txt
+cut -c 5-10 nombres.txt
+```
+
+## GREP
+
+- Sintaxis: grep patron [ficheros]
+
+- Muestra las líneas en donde se encuentra el patrón
+
+- Opciones:
+  - -i => No distingue entre mayúsculas y minúsculas
+  - -c => Cuenta el número de líneas donde aparece el patrón
+  - -v => Muestra las líneas donde NO encuentra el patrón
+  - -A numero => Muestra el número de líneas indicado después de la coincidencia del patrón
+  - -B numero => Muestra el número de líneas indicado antes de la coincidencia del patrón
+  - -H => Incluye el nombre del fichero en el resultado de la búsqueda
+  - -h => Quita el nombre del fichero en el resultado de la búsqueda
 
 
 
