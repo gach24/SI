@@ -343,6 +343,25 @@ cat x*
   - -1 num => Posición del campo en común en el primer fichero
   - -2 num => Posición del campo en común en el segundo fichero
 
+- Ejemplos:
+
+```sh
+$ cat nombresyprimerapellido.txt
+german carreño
+alejandro castaño
+victor xavier
+
+$ cat nombresysegundoapellido.txt
+german hevia
+alejandro fonseca
+victor rodriguez
+
+$ join -t' ' -1 1 -2 1 nombresyprimerapellido.txt nombresysegundoapellido.txt
+german carreño hevia
+alejandro castaño fonseca
+victor xavier rodriguez
+```
+
 ### GREP
 
 - Sintaxis: grep patron [ficheros]
@@ -352,13 +371,193 @@ cat x*
 - Opciones:
   - -i => No distingue entre mayúsculas y minúsculas
   - -c => Cuenta el número de líneas donde aparece el patrón
+  - -e patron => Podemos especificar varios patrones
   - -v => Muestra las líneas donde NO encuentra el patrón
   - -A numero => Muestra el número de líneas indicado después de la coincidencia del patrón
   - -B numero => Muestra el número de líneas indicado antes de la coincidencia del patrón
   - -H => Incluye el nombre del fichero en el resultado de la búsqueda
   - -h => Quita el nombre del fichero en el resultado de la búsqueda
 
-## LS
+- Ejemplos:
+
+```sh
+# Trabajaremos sobre este fichero
+$ cat nombres.txt 
+1 german carreño hevia
+2 alejandro castaño fonseca
+3 victor xavier rodriguez
+
+# Encuentra germán en la primera línea y la muestra
+$ grep "german" nombres.txt 
+1 german carreño hevia
+
+# No encuentra nada porque distingue entre mayúsculas y minúsculas
+$ grep "German" nombres.txt 
+
+# Encuentra porque -i permite no distinguir entre mayúsculas y minúsculas
+$ grep -i "German" nombres.txt
+1 german carreño hevia
+
+# Muestra el numero de líneas donde encuentra el patrón "ca"
+$ grep -c "ca" nombres.txt
+2
+
+# Muestra las líneas donde NO encuetra el patrón
+$ grep -v "german" nombres.txt
+2 alejandro castaño fonseca
+3 victor xavier rodriguez
+
+# Busca recursivamente el patrón
+$ grep -R "german" *
+nombres.txt:1 german carreño hevia
+nombresyprimerapellido.txt:german carreño
+nombresysegundoapellido.txt:german hevia
+numeros.txt:1 german carreño hevia
+```
+
+#### EXPRESIONES REGULARES
+
+##### EXPRESIONES REGULARES BÁSICAS
+
+- "^" => Indica el comienzo de línea
+- "$" => Indica el final de línea
+- "." => Sustituye a cualquier carácter
+- "[caracteres]" => Permite buscar un carácter de entre un conjunto
+
+- Ejemplos:
+
+```sh
+# Líneas que comienzan con un 1
+$ grep "^1" nombres.txt
+1 german carreño hevia
+
+# Líneas que acaban por "a" o "A"
+$ grep -i "a$" nombres.txt
+1 german carreño hevia
+2 alejandro castaño fonseca
+
+# Líneas que solo tengan 3 caracteres cualesquiera
+$ grep "^...$" nombres.txt
+
+# Líneas que comiencen con 1 o 2
+$ grep -i ^[12] nombres.txt
+1 german carreño hevia
+2 alejandro castaño fonseca
+
+# Podemos negar dentro de la agrupación
+# Líneas que no comiencen por 1 o 2
+grep -i ^[^12] nombres.txt
+3 victor xavier rodriguez
+```
+
+##### EXPRESIONES REGULARES EXTENDIDAS
+
+- Se ejecutan mediante `grep -E` o `egrep`
+
+- Solo tienen efecto a la expresión que tienen a su izquierda
+
+- Expresiones de repetición:
+  - "?" => Cero o una vez
+  - "*" => Cero, una o muchas veces
+  - "+" => Una o muchas veces
+  - "{n}" => n veces
+  - "{n, m}" => Entre n y m veces
+  - "{n,}" => Como mínimo n veces
+- Otras:
+  - "()" => Agrupación
+  - "|" => Alternativa
+
+- Ejemplos:
+
+```sh
+# Trabajaremos con este fichero
+cat numeros.txt | head
+1
+2
+...
+999
+1000
+
+# Encuentra números de 1 o 2 dígitos
+egrep "^[0-9][0-9]?$" numeros.txt
+1
+2
+...
+99
+1000
+
+# Números que empiezen por 5
+egrep "^5[0-9]*$" numeros.txt
+5
+50
+53
+...
+59
+500
+501
+...
+
+# Números con unidades o decenas
+egrep "^[0-9][01]+$" numeros.txt
+10
+11
+20
+21
+30
+31
+40
+41
+...
+
+# Unidades
+egrep "^[0-9]{1}$" numeros.txt
+1
+...
+9
+
+# Unidades y decenas
+egrep "^[0-9]{1,2}$" numeros.txt
+1
+...
+9
+
+# decenas, centenas, ...
+egrep "^[0-9]{2,}$" numeros.txt
+1
+...
+1000
+```
+
+### TR
+
+- Sintaxis: flujo | tr [opciones] [conjunto1] [conjunto2]
+
+- Sustituye los caracteres del conjunto1 por los del conjunto2 en el orden en que se los encuentra
+
+- Opciones
+  - -s conjunto => Elimina todos los duplicados (deben estar contiguos)
+  - -d conjunto => Elimina caracteres
+
+- Ejemplos:
+
+``` sh
+
+# Sustituye mayúsculas por minúsculas
+$ cat nombres.txt | tr [a-zñ] [A-ZÑ]
+1 GERMAN CARREÑO HEVIA
+2 ALEJANDRO CASTAÑO FONSECA
+3 VICTOR XAVIER RODRIGUEZ
+
+# Elimina los duplicados
+$ echo "Germaaaan" | tr -s "a"
+German
+
+# Elimina el caracter a y n
+echo "Germaaaan" | tr -d "an"
+Germ
+```
+
+### LS
 
 - Sintaxis: ls [opciones] [ficheros/patron]
 
