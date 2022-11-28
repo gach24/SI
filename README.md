@@ -541,6 +541,11 @@ egrep "^[0-9]{2,}$" numeros.txt
 - Ejemplos:
 
 ``` sh
+# Trabajaremos sobre este fichero
+$ cat nombres.txt 
+1 german carreño hevia
+2 alejandro castaño fonseca
+3 victor xavier rodriguez
 
 # Sustituye mayúsculas por minúsculas
 $ cat nombres.txt | tr [a-zñ] [A-ZÑ]
@@ -553,8 +558,66 @@ $ echo "Germaaaan" | tr -s "a"
 German
 
 # Elimina el caracter a y n
-echo "Germaaaan" | tr -d "an"
+$ echo "Germaaaan" | tr -d "an"
 Germ
+```
+
+### ECHO
+
+- Sintaxis: echo [opciones] argumentos
+
+- Este comando muestra los argumentos en la salida estandar
+- Podemos mostrar variables de entorno, estas variables se especifican con un símbolo "$" delante, por ejemplo, `$USER`
+- Existen variables de entorno que se crean cuando entras en sesión
+  - $USER
+  - $PWD
+  - $OLDPWD
+  - $HOME
+- Podemos definir nuestras propias variables de entorno
+
+- Ejemplos:
+
+```sh
+# Declaramos y asignamos valor a la variable DIR
+$ DIR="/etc"
+# Utilizamos la variable DIR para mostrar el contenido del directorio /etc mediante la variable $DIR
+$ ls -ld $DIR
+```
+
+- Cuando mostramos por pantalla cadenas de caracteres mediante el comando `echo`, podemos utilizar comillas simples o dobles
+  - Las comillas dobles, permiten sustituir el valor de la variable dentro de la cadena
+  - Las comillas simples, no sustituyen el valor de la variable dentro de la cadena
+
+- Ejemplos:
+
+```sh
+# Declaramos y asignamos valor a la variable nombre
+nombre="Pepe"
+
+echo "Hola $nombre" # Muestra Hola Pepe
+echo 'Hola $nombre' # Muestra Hola $nombre
+```
+
+- Opciones:
+  - -n => Incluye salto de línea
+  - -e => Permite utilizar caractéres especiales \n, \t, ...
+
+- Ejemplos:
+
+```sh
+echo -n "Hola mundo" # Imprime Hola mundo y salta a la sínea siguiente
+echo -e "\t\t\tHola mundo\n" # Imprime Hola mundo con tabulaciones al principio y salto de línea al final
+```
+
+### ENV
+
+- Sintaxis: env
+
+- Este comando muestra todas las variables de entorno
+
+```sh
+# Muestra por pantalla todas las variables de entorno
+$ env
 ```
 
 ### LS
@@ -562,25 +625,81 @@ Germ
 - Sintaxis: ls [opciones] [ficheros/patron]
 
 - Listar el contenido de uno o varios directorios
+- Si no introducimos un fichero/s o patron/es muestra el contenido del directorio actual
+- En debian el comando `ls` es un alias de `ls --color=auto`, si queremos ver el alias `alias ls`
 
 - Opciones
   - -a => Muestra los archivos ocultos / o que comienzan por punto
-  - -l => Muestra de cada archivo sus propiedades
+  - -l => Formato largo (Permisos, número de subdirectorios/enlaces, usuario propietario, grupo, tamaño, fecha de modificación, nombre)
   - -h => Muestra el formato leible para el usuario la cantidad de bytes
   - -R => Lista recursivo
   - -t => Lista ordenadamente por fecha de modificación
   - -S => Lista ordenadamente por tamaño
   - -r => Invierte el orden
+  - -1 => Muestra cada fichero/directorio/enlace en una línea
+
+Ejemplos:
+
+```sh
+# Muestra el contenido del directorio actual
+$ ls
+
+# Muestra el contenido del directorio actual con los ficheros ocultos y en formato largo
+$ ls -al
+
+# Muestra los ficheros acabados en .avi ordenados por tamaño
+$ ls -S *.avi
+
+# Muestra el contenido del directorio /etc y el de sus subdirectorios ...
+$ ls -R /etc
+```
 
 ## MKDIR
 
-- Sintaxis: mkdir [opciones] <directorios>
+- Sintaxis: mkdir [opciones] directorio [directorios]
 
 - Crea directorio o directorios
 
 - Opciones
+  - -m permisos
   - -p => Crea directorios anidados
   - -v => Muestra una traza de las operaciones
+
+- Ejemplos:
+
+```sh
+# Crea el directorio "test"
+mkdir test
+
+# Crea el directorio test con permisos de rwx solamente para el usuario propietario
+mkdir -m 700 test
+
+# Error si los directorios test y sdk no existen
+mkdir test/sdk/java
+
+# Crea todos los directorios anidados
+mkdir -p test/sdk/java
+```
+
+### CP
+
+- Sintaxis: cp [opciones] origen [origenes] destino
+
+- Copia ficheros y directorios en un destino
+- Se pueden especificar distintos orígenes
+
+- Opciones:
+  - -i => Pregunta antes de sobreescribir
+  - -r => Copia directorios recursivamente
+  - -u => Copia solamente los ficheros nuevos o modificados
+  - -p => Preserva los mismos permisos
+  - -a => Es -p, -r y -u juntos
+
+- Ejemplos
+
+```sh
+
+```
 
 ## RMDIR
 
@@ -611,6 +730,61 @@ Germ
 - Sintaxis: find <path> [patron] [opciones]
 
 - Busca ficheros o directorios
+
+### MV
+
+- Sintaxis: mv [opciones] origen y destino
+
+- Mueve los ficheros de origen a un destino
+- Si las carpetas de origen y de destino son la misma renombra
+
+- Opciones:
+  - -i => Pregunta antes de sobrescribir
+  - -u => Solo mueve los ficheros nuevos o modificados
+
+
+
+### CHOWN
+
+- Sintaxis: chown [opciones] propietario:grupo fichero/carpeta [ficheros/carpetas]
+
+- Cambia el propietario y grupo de un fichero o carpeta
+
+- Este comando solomente es posible realizarlo con permisos de administrador
+
+- Opciones:
+  - -R => Cambia el propietario y grupo recursivamente
+  - -c => Muestra los cambios que realmente hace
+  - -v => Muestra todo, los cambios efectuados y los que no necesita realizar
+
+### CHOWN
+
+- Sintaxis: chgrp [opciones] grupo fichero/carpeta [ficheros/carpetas]
+
+- Opciones:
+  - -R => Cambia el propietario y grupo recursivamente
+  - -c => Muestra los cambios que realmente hace
+  - -v => Muestra todo, los cambios efectuados y los que no necesita realizar
+
+### WHICH
+
+- Sintaxis: which comando
+
+- Muestra la ruta al comando
+
+### WHEREIS
+
+- Sintaxis: whereis comando
+
+- Muestra la ruta al comando y la ruta al fichero de ayuda el man
+
+
+### APT
+
+- Su nombre viene de Advanced Packing Tool
+- Utilizada por Debian y sus derivados
+- Instala los programas y librerías en binario
+- Facilidad para actualizar la distribución
 
 
 
