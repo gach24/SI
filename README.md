@@ -727,9 +727,40 @@ mkdir -p test/sdk/java
 
 ## FIND
 
-- Sintaxis: find <path> [patron] [opciones]
+- Sintaxis: find directorio/s [opciones]
 
 - Busca ficheros o directorios
+
+- Opciones:
+  - --name patrón => Busca el patrón en los nombres de ficheros y directorios
+  - --iname patrón => Busca el patrón en los nombres de ficheros y directorios sin tener en cuenta mayúsculas o minúsculas
+  - --type f|d|l => Filtra la búsqueda por ficheros (f), directorios (d) y links (l)
+  - --size +|-tamañoK|M|G => Filtra la búsqueda por tamaño, (+) ficheros de mayores a ese tamañó, (-) ficheros menores a el tamaño, (K) Kilobytes, (M) Megabytes, (G) Gigabyte
+  - --atime +|-dias => Filtra la búsqueda por los tiempos de acceso al fichero en días, (+) ficheros con tiempo de acceso mayores al número de días, (-) ficheros con tiempo de acceso menores al número de días
+  - --mtime +|-dias => Filtra la búsqueda por los tiempos de modificación al fichero en días, (+) ficheros con tiempo de modificación mayores al número de días, (-) ficheros con tiempo de modificación menores al número de días
+  - --ctime +|-dias => Filtra la búsqueda por los tiempos de cambio al fichero en días, (+) ficheros con tiempo de cambio mayores al número de días, (-) ficheros con tiempo de cambio menores al número de días
+  - --atime minutos => Lo mismo pero en minutos
+  - --mtime minutos => Lo mismo pero en minutos
+  - --ctime minutos => Lo mismo pero en minutos
+  - --user usuario => Filtra los ficheros, directorios o enlaces por su propietario
+  - --group grupo => Filtra ficheros, directorios o enlaces por su grupo
+  - --maxdepth numero => Realiza la búsqueda en el número de subdirectorios indicado
+
+- Ejemplos:
+
+```sh
+# Busca los ficheros con extensión ".txt" en el directorio "/tmp"
+$ find /tmp --name "*.txt"
+
+# Busca los ficheros que contengan us o US
+$ find . --iname "*US*"  
+
+
+
+```
+
+
+
 
 ### MV
 
@@ -741,8 +772,6 @@ mkdir -p test/sdk/java
 - Opciones:
   - -i => Pregunta antes de sobrescribir
   - -u => Solo mueve los ficheros nuevos o modificados
-
-
 
 ### CHOWN
 
@@ -781,31 +810,104 @@ mkdir -p test/sdk/java
 
 ### APT
 
+- Sintaxis: apt [subcomando]
+
 - Su nombre viene de Advanced Packing Tool
 - Utilizada por Debian y sus derivados
 - Instala los programas y librerías en binario
 - Facilidad para actualizar la distribución
 
+- Subcomandos
+  - update => Actualiza el listado de software disponible en los repositorios
+  - upgrade => Actualiza programas y librerías no actulizadas
+  - dist-upgrade => Actualiza también librerías del sistema
+  - autoremove => Borraría dependencias que no se están utilizando
+
+- Ejemplos:
+
+```sh
+# Actuliza la lista de software disponible en los repositorios
+apt update
+
+# Actuliza programas y librerías
+apt upgrade
+
+# Actualiza todo
+apt dist-upgrade
+
+# Borra las dependencias no utilizadas
+apt autoremove
+```
+
+#### APT-CACHE
+
+- Sintaxis: apt-cache search [opciones] expresión
+
+- Utilidad para consultar la base de datos local que contiene la lista de paquetes
+
+- Sin opciones busca en el nombre del paquete, su descripción corta y su descripción larga
+
+- Opciones:
+  --names-only => Busca solo en el nombre del paquete
+
+- Ejemplos:
+
+```sh
+# Busca todos los paquetes que tengan la palabra "
+apt-cache search ftp 
+```
+
+
+#### APT-SHOW
+
+- Sintaxis: apt-show paquete
+
+- Muestra información sobre el paquete
 
 
 
+### DPKG
 
+- Sintaxis: dpkg [opciones] paquete
 
+- En los derivados de REDHAT la utilidad que se utiliza es rpm
 
+- Permite installar paquetes sin sus depencias
 
+- Opciones:
+  - -i paquete => Instala
+  - l => lista los paquetes instalados
 
+### SHUTDOWN
 
+- Sintaxis: shutdown [opciones] [tiempo]
 
+- Apaga o reinicia el equipo
+- Si no se indica el tiempo por defecto apagará o reiniciará en un minuto
 
+- Opciones:
+  - -r => reinicia el equipo
+  - -h => Apaga el equipo
+  - -c => Cancela el apagado programado
+  - -k => No apaga solo avisa a los usuarios
 
+- Ejemplos:
 
+```sh
+# Apaga el equipo en un minuto
+$ shutdown -h
 
+# Reinicia el equipo en un minuto
+$ shutdown -r 
 
+# Reinicia inmdiatamente 
+$ shutdown -r now
 
+$ shutdown -r now
 
+# Apaga en 5 minutos
+$ shutdown -h +5
 
-
-
-
-
-
+# Apaga a las 14:40
+$ shutdown -h 14:40
+```
