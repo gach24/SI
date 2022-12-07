@@ -911,3 +911,332 @@ $ shutdown -h +5
 # Apaga a las 14:40
 $ shutdown -h 14:40
 ```
+
+### SLEEP
+
+- Sintaxis: sleep segundos
+
+- Lanza un proceso que no hace nada durante el número de segundos indicado
+
+- Ejemplos: 
+
+```sh
+$ sleep 30
+
+# Lanza el sleep durante 60 segundos y después el updatedb
+$ sleep 60 && updatedb
+
+```
+
+### JOBS
+
+- Sintaxis: jobs
+
+- Cuando lanzamos un comando toma el control de la sesión actual. Si el comando que estamos ejecutnado va a tardar uno, dos o más minutos tenemos que terminar a que termine, una posible solución es abrir varias sesiones
+
+- Ejemplo
+
+```sh
+# El mensaje "Terminado" se muestra por pantalla cuando pasa un minuto, mientras tanto no podemos ejecutar otro comando
+$ sleep 60 && echo "Terminado"
+```
+
+- Otra solución para ejecutar las aplicaciones en paralelo en una misma consola es ejecutar las aplicaciones en segundo plano mediante el caracter `&`
+
+- Ejemplo:
+
+```sh
+# Lanza el comando sleep en segundo plano
+$ sleep 60 &
+```
+
+- Cuando lanzamos el comando nos muestra dos identificadores `[1] 1484`, el primero es el identificador en la tabla de procesos del usuario, el segundo identificador es el PID del proceso
+
+- Mediante el comando jobs podemos ver la tabla de procesos
+
+- Ejemplo:
+
+```sh
+# Muestra la tabla de procesos en segundo plano del usuario
+$ jobs
+```
+
+- Muestra
+
+| Id Tabla de procesos | Estado | Comando |
+| -------------------- | ------ | ------- |
+| [1] | Ejecutando | sleep 60 |
+| [2]- | Ejecutando | sleep 120 |
+| [3]+ | Ejecutando | sleep 180 |
+
+- Si la lista se vacía se reinica la numeración del identificador de la tabla de procesos en segundo plano
+
+- El símbolo "+" indica que es el último proceso o que cambia su estado en la tabla de procesos
+
+- El símbolo "-" indica que es el penúltimo proceso o que cambia su estado en la tabla de procesos
+
+### FG
+
+- Sintaxis: fg [%numero]
+
+- Envía un proceso que se está ejecutando en segundo plano a primer plano
+
+- El `numero` es opcional e indica el identificador del proceso en la tabla de procesos que se quiere mandar a primer plano, si no se indica número se envíara a primer plano el último proceso que se insertó en la tabla de procesos ("+")
+
+- Ejemplos
+
+```sh
+# Manda a primer plano el último proceso que se insertó o cambió de estado en la tabla de procesos
+$ fg
+
+# Manda a primer plano el proceso con identificador en la tabla de procesos igual a 1
+$fg %1
+```
+
+### BG
+
+- Sintaxis: bg [%n]
+
+- Envía un proceso a segundo plano
+
+- Si quiero poner un proceso que está en primer plano en segundo plano debo realizar dos pasos
+  1. `ctrl+z` => Lo pone en estado suspendido (stopped) y lo inserta en la tabla de procesos
+  2. `bg` => Lo ejecuta en segundo plano
+
+- El `numero` es opcional e indica el identificador del proceso en la tabla de procesos que se quiere ejecutar en segundo plano, si no se indica el `numero` se ejecutará en segúndo plano el último proceso que entró o cambió su estado en la tabla de procesos
+
+- Debemos tener cuidado con los comandos en segundo plano que siguen mostrando la salida por consola ya que dificultará la introducción de nuevos comandos
+
+- Ejemplos:
+
+```sh
+# Ejecutadomos sleep en primer plano
+$ sleep 60 
+
+# Para pausarlo e introducirlo en la tabla de procesos en segundo plano ctrl+z
+
+# Después relanzamos el proceso
+$ bg
+
+# Como acabamos de introducirlo en la tabla de procesos no es necesario el indicar el identificador del proceso en la tabla de procesos
+```
+
+### PS
+
+- Sintaxis: ps [opciones]
+
+- Muestra información sobre los procesos activos
+
+- Por defecto sin nunguna opción muestra:
+  - PID => Identificador del proceso en el sistema
+  - TTY => Terminal asociado si lo tiene
+  - TIME => Tiempo de ejecución (Tiempo de CPU consumido)
+  - CMD => Comando ejecutado (nombre del proceso)
+
+- Entre las opciones podemos distingur dos formas con "-" y sin él
+  - a => Muestra todos los procesos asociados a un terminal (sin guión)
+  - x => Muestra todos los procesos del sistema (sin guión)
+  - -eA => Muestra información parecida a los dos anteriores (con guión)
+  - u => Información orientada al usuario
+  - -f => Formato lago
+
+- Entre la información en formato largo se encuentra:
+  - UID => Usuario que ejecuta el proceso
+  - PID => Identificador del proceso padre
+  - C => Uso del procesador
+  - STIME => Hora de inicio de la ejecución
+
+- Entre la información orientada al usuario se encuentra:
+  - USER => Usuario propietario del proceso
+  - %CPU => Porcentaje de uso del procesador
+  - %MEM => Porcentaje de uso de memoria
+  - VSZ => Memoria virtual utilizada por el proceso
+  - RSS => Memoria física utilizada por el proceso
+  - STAT => Esado del proceso
+  - START => Hora de inicio del proceso
+
+- Los posibles estados del proceso son:
+  - S => Esperando
+  - R => Ejecutando
+  - D => Esperando por algún dispositivo
+  - T => Pausado
+  - Z => No responde
+
+- Los posibles estados del proceso suelen ir acompañados de información adicional:
+  - s => Proceso padre
+  - l => Proceso con hilos
+  - + => Primer plano
+
+### KILL
+
+- Sintaxis: kill [-señal] PID
+
+- Manda una señal a un proceso mediante su identificador
+
+- Las posibles señales son
+
+| Número de señal | Nombre | Descripción |
+| -------------------- | ------ | ------- |
+| 15 | SIGTERM | Terminar el proceso  |
+| 9 | SIGKILL | Matar el proceso  |
+| 17,19,23 | SIGSTOP | Pausarlo |
+| 3 | SIGQUIT | Salir desde teclado ctrl+\  |
+| 2 | SIGINT | Salir desde teclado ctrl+c |
+| 1 | SIGHUB | Utilizado para recargar configuraciones |
+
+- Por defecto si no indicamos señal se manda la señal 15
+
+- Para indicar la señar que queremos mandar podemos indicar su número, o su nombre, o su nombre sin la el prefico SIG
+
+- Ejemplos:
+
+```sh
+
+# Envía la señal SIGTERM al proceso con identificador 1467
+kill 1467
+
+# Mata el proceso 1489
+kill -9 1489 
+
+# Pausa el proceso 1490
+kill -stop 1490
+```
+
+### KILLALL
+
+- Sintaxis: killall [-u usuario] [-señal] [nombre_proceso]
+
+- Envía una señal de las indicadas en el apartado anterior a todos los procesos con un nombre concreto o de un usuario concreto o ambos
+
+- Este comando se puede ejecutar para matar tus propios procesos, pero si se utiliza la opción `-u usuario` con otro usuario es necesario privilegios de administración
+
+```sh
+# Manda la señal por defecto (SIGTERM) a todos los procesos sleep
+killall sleep
+
+# Manda la señal (SIGKILL) a todos los procesos de german
+killall -u german -9 
+
+# Manda la señal (SIGKILL) a todos los procesos sleep del usuario german
+killall -u german -9 sleep
+```
+
+### FREE
+
+- Sintaxis: free [opciones]
+
+- Muestra información relativa a la memoria física y virtual
+
+- Opciones:
+  - -m => Muestra la información en MB
+  - -g => Muestra la información en GB
+  - -h => Muestra la información en "Human Readable"
+
+- Muestra:
+  - Memoria física:
+    - Total
+    - Usada
+    - Libre
+    - Shared => Memoria compartida entre procesos
+    - Buffers => Tamaño de los buffers de memoria
+    - Cached => Tamaño de la memoria cache
+  - Swap (area de intercambio / memoria virtual)
+    - Total
+    - Usada
+    - Libre
+
+```sh
+# Muestra la información en un formato más agradable para el usuario
+$ free -h
+```
+
+### UPTIME
+
+- Sintaxis: uptime
+
+- Muestra:
+  - Cuanto tiempo lleva el sistema encendido
+  - Número de usuarios conectados
+  - Carga del sistema
+
+- En cuanto a la carga del sistema muestra la media del último minuto, de los últimos cinco minutos, y la media de los últimos 15 minutos
+
+- Ejemplo:
+
+```sh
+$ uptime
+```
+
+### TOP
+
+- Sintaxis: top [opciones]
+
+- Muestra en tiempo real información del sistema
+
+- Tiene dos apartados
+  - Información del sistema
+  - Lista de procesos
+
+- Opciones:
+  - -d segundos => Actualiza la información cuando se cumplen el númerod de segundos indicados, por defecto 3 segundos
+  - -u usuario => Muestra la lista de procesos de un usuario en concreto
+
+- Información:
+  - Primera línea => Comando `uptime`
+  - Segunda línea => Número de procesos, número de procesos dormidos, número de procesos ejecutandose, ...
+  - Tercera línea:
+    - us => % de uso del procesador
+    - sy => % de uso de los procesos del sistema
+    - id => % de procesos que están esperando a acceder al procesador
+    - % de procesos que han cambido su prioridad
+  - Cuarta y quinta línea: Comando `free`
+  - Siguientes líneas salida del comando `ps` pero ordenadas por el uso del procesador
+- Información de la lista de procesos
+  - NI => significa prioridad y va desde -19 hasta 20, siendo 20 el valor con menos prioridad, 0 el valor por defecto y -19 el valor de mayor prioridad
+  - VIRT => Memoria virtual
+  - RES => Memoria estática
+  - SMR => Memoria compartida
+  - %CPU
+  - %MEMORIA
+  - TIME+`=> Tiempo que ha utilizado el procesador
+  - COMANDO
+
+- Opciones interactivas:
+  -h => Nos muesta la ayuda
+  -z => Nos muestra colores
+  -k => Sirva para matar un proceso
+  -M => Ordena los proceso por su memoria consumida
+
+### NICE
+
+- Sintaxis: nice -n prioridad comando
+
+- Ejecuta un comando con una prioridad distinta a la de por defecto
+
+- La prioridad por defecto es 0, la máxima prioridad es -19 y la menor prioridad es 20
+
+- Ejemplos:
+
+```sh
+# Error ya que es una prioridad por debajo de la de por defecto, necesitamos privilegios de administrador
+$ nice -n -5 sleep 1800 &
+
+# Lanzamos el sleep con prioridad 5
+$ nice -n 5 sleep 1800 & 
+```
+
+### RENICE
+
+- Sintaxis: renice -n prioridad PID
+
+- Para cambiar la prioridad de un proceso que ya se esté ejecutando
+
+- En ambos comandos `nice` y `renice` solo podemos disminuir la prioridad (aumentar el número), para aumentar la prioridad es necesario privilegios de administrador
+
+- Ejemplos:
+
+```sh
+# Establecemos la prioridad a un proceso con PID 1349 a 10, debe ser mayor que la que ya tenía
+$ renice -n 10 1349
+
+```
