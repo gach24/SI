@@ -759,9 +759,6 @@ $ find . --iname "*US*"
 
 ```
 
-
-
-
 ### MV
 
 - Sintaxis: mv [opciones] origen y destino
@@ -806,7 +803,6 @@ $ find . --iname "*US*"
 - Sintaxis: whereis comando
 
 - Muestra la ruta al comando y la ruta al fichero de ayuda el man
-
 
 ### APT
 
