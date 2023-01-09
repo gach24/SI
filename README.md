@@ -1032,7 +1032,7 @@ $ bg
 - Entre las opciones podemos distingur dos formas con "-" y sin él
   - a => Muestra todos los procesos asociados a un terminal (sin guión)
   - x => Muestra todos los procesos del sistema (sin guión)
-  - -eA => Muestra información parecida a los dos anteriores (con guión)
+  - -e => Muestra información parecida a los dos anteriores (con guión)
   - u => Información orientada al usuario
   - -f => Formato lago
 
@@ -1062,7 +1062,7 @@ $ bg
   - s => Proceso padre
   - l => Proceso con hilos
   - + => Primer plano
-
+  
 ### KILL
 
 - Sintaxis: kill [-señal] PID
